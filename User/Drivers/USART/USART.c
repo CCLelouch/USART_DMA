@@ -51,7 +51,7 @@ static void NVIC_Configuration(void)/*关于USART中断的都写在这里*/
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); /* 嵌套向量中断控制器组选择 */
     NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn; /* 配置USART3为中断源 */
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; /* 抢断优先级*/ 
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;/* 子优先级 */ 
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;/* 子优先级 */ 
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; /* 使能中断 */
     NVIC_Init(&NVIC_InitStructure); /* 初始化配置NVIC */
 //  USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);// 使能串口接收中断			
@@ -92,10 +92,7 @@ void USART_Config(void)
     USART_InitStruct.USART_Mode       = MyUSART1_Type.Mode;//USART_Mode_Rx | USART_Mode_Tx;
     USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_Init(USART1, &USART_InitStruct);
-//用getchar就要关闭*************************************************************************BUG*****/ 
-   
-    NVIC_Configuration();// 串口中断优先级配置	DMA	
-    
+//用getchar就要关闭*************************************************************************BUG*****/   
 //#ifndef  STDIO_USART// 定义这个是用在标准输入输出库,不用于中断STDIO_USART 		
 ////	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);// 使能串口接收中断
 //#endif    
@@ -126,7 +123,6 @@ void USART_Config(void)
     USART_InitStruct.USART_BaudRate   = MyUSART2_Type.BaudRate;
     USART_InitStruct.USART_WordLength = USART_WordLength_8b;
     USART_InitStruct.USART_StopBits   = USART_StopBits_1;
-
     USART_InitStruct.USART_Parity     = MyUSART2_Type.Parity;
     USART_InitStruct.USART_Mode       = MyUSART2_Type.Mode;//USART_Mode_Rx | USART_Mode_Tx;
     USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
@@ -136,9 +132,9 @@ void USART_Config(void)
   #endif
 /******************************************* USART3 ******************************************/
   #if (DEF_USART3 == 1)
-    MyUSART1_Type.BaudRate = USER_USART3_BAUDRATE;
-    MyUSART1_Type.Parity   = USER_USART3_Parity;
-    MyUSART1_Type.Mode     = USER_USART3_Mode;
+    MyUSART3_Type.BaudRate = USER_USART3_BAUDRATE;
+    MyUSART3_Type.Parity   = USER_USART3_Parity;
+    MyUSART3_Type.Mode     = USER_USART3_Mode;
     
     RCC_APB2PeriphClockCmd(USER_USART3_GPIO_CLK, ENABLE);// 打开串口GPIO的时钟		
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);//USART外设时钟 
@@ -161,14 +157,14 @@ void USART_Config(void)
     USART_InitStruct.USART_BaudRate   = MyUSART3_Type.BaudRate;
     USART_InitStruct.USART_WordLength = USART_WordLength_8b;
     USART_InitStruct.USART_StopBits   = USART_StopBits_1;
-
     USART_InitStruct.USART_Parity     = MyUSART3_Type.Parity;
-    USART_InitStruct.USART_Mode       = MyUSART3_Type.Mode;//USART_Mode_Rx | USART_Mode_Tx;
+    USART_InitStruct.USART_Mode       = USART_Mode_Rx | USART_Mode_Tx; /*MyUSART3_Type.Mode;*/
     USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_Init(USART3, &USART_InitStruct);
-            
+                    
     USART_Cmd(USART3, ENABLE);// 使能串口	
   #endif
+  
   NVIC_Configuration();// 串口中断优先级配置
 }
 
@@ -192,6 +188,7 @@ void USART_Send_Byte(USART_TypeDef* USARTx, uint8_t Data)
   */
 void USART_Send_String(USART_TypeDef* USARTx, const uint8_t *String)
 {
+
   do
     USART_Send_Byte(USARTx, *String++);
   while(*String!='\0');

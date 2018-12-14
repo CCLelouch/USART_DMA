@@ -45,21 +45,24 @@ uint8_t v='5',h='2';
 void Initial_Run(void)//软件初始化函数
 {
 
-  USART_Send_String(USART2,"你好\r\n");
-  DMA_USART_Send("nihao\r\n",8);
-  DMA_USART_Send("wohao\r\n",8);
-  printf("good %c %c\n",a,ch);
+//  USART_Send_String(USART2,"你好\r\n");
+//  DMA_USART_Send("nihao\r\n",8);
+  printf("good %c %c\r\n",a,ch);
+//  printf_usart1("ni %c\r\n",ch);  
+USART3->DR = '5';
 }
 
 uint8_t buf[10];
 void loop(void)				//循环主函数
 {
-
+  
 	while(1)
 	{	
-//      printf_usart1("ni %c\r\n",ch);  
-//      printf_usart2("ni %c\r\n",ch);
-//      printf_usart3("%c %c\r\n",v,h);
+      printf_usart1("u1 %c\r\n",ch);  
+      printf_usart2("u2 %c\r\n",ch);
+//      USART_Send_String(USART3, "asdf");
+//printf("good1\r\n");
+      printf_usart3("u3 %c %c\r\n",v,h);
 //      printf("%c %c\r\n",a,ch);
 
 //    Key_Scan(Scan);
@@ -69,14 +72,14 @@ void loop(void)				//循环主函数
 //    getKey();
 //    if(KeyBuffer.Name == Key_1 && KeyBuffer.ReadFlag == 1)
 //    printf("ACACU=13.23/A=15.12/T=35.58"); 
-    Delay_usms(800 ms);
+    Delay_usms(80 ms);
     
     
 //    printf_usart1("-->");
 
-    DMA_USART_Receive(buf,13);
-    Delay_usms(2 ms);
-    DMA_USART_Send(buf,13);
+//    DMA_USART_Receive(buf,13);
+//    Delay_usms(2 ms);
+//    DMA_USART_Send(buf,13);
     
 //    DMA_USART_Send("\r\n",3);
 //    printf_usart1("\r\n"); 
